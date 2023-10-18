@@ -63,7 +63,7 @@ speechToText();
 )
 
 
-const API_KEY = "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"; // Replace with your actual API key
+const API_KEY = "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"; // Replace with your actual API key
 
 async function fetchResponse() {
 
@@ -107,29 +107,25 @@ async function fetchResponse() {
 
 async function speechToText() {
 
-  const response = await fetch("https://api.openai.com/v1/audio/transcriptions", { //This is the API endpoint
+  let file = new File([audioBlob],document.getElementById('voiceName').value + ".wav", {type: "audio/wav"});
 
+  const formData = new FormData();
+  formData.append('model', 'whisper-1');
+  formData.append('file', file);
+  formData.append('max_tokens', 100);
+  formData.append('language', 'de');
+  formData.append('temperature', 0.5);
+
+  const response = await fetch("https://api.openai.com/v1/audio/transcriptions", { //This is the API endpoint
+ 
     method: "POST",
 
+    body: formData,
+
     headers: {
-
-      Authorization: `Bearer ${API_KEY}`
-
-    },
-
-    body: JSON.stringify({
-
-      model: "whisper-1",
-
-      file: new File([audioBlob],document.getElementById('voiceName').value, {type: "audio/wav"}),
-
-      "max_tokens": 100,
-
-      "language": "de",
-
-      "temperature": 0.5,
-
-    }),
+      'Authorization': `Bearer ${API_KEY}`
+  
+  }
 
   });
 
