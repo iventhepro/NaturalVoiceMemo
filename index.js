@@ -24,7 +24,7 @@ async function main() {
 
 
 
-main(); 
+main();
 
 async function cloneVoice(voice_name, audioFile) {
   const fetch = require('node-fetch');
@@ -77,9 +77,54 @@ document.getElementById('startRecording').addEventListener('click', async () => 
 });
 
 //stop audio Recording
-document.getElementById('stopRecording').addEventListener('click', async () =>{
-  if(mediaRecorder && mediaRecorder.state !== 'inactive'){
+document.getElementById('stopRecording').addEventListener('click', async () => {
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
     mediaRecorder.stop();
   }
 })
+
+
+const API_KEY = "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"; // Replace with your actual API key
+
+async function fetchResponse() {
+
+  const response = await fetch("https://api.openai.com/v1/chat/completions", { //This is the API endpoint
+
+    method: "POST",
+
+    headers: {
+
+      Authorization: `Bearer ${API_KEY}`,
+
+      "Content-Type": "application/json",
+
+    },
+
+    body: JSON.stringify({
+
+      "model": "gpt-3.5-turbo",
+
+      "messages": [{ "role": "user", "content": "Wer ist Präsident von Amerika?" }],
+
+      "max_tokens": 100,
+
+      "top_p": 1,
+
+      "temperature": 0.5,
+
+      "frequency_penalty": 0,
+
+      "presence_penalty": 0
+
+    }),
+
+  });
+
+  const data = await response.json();
+
+  console.log(data);
+
+}
+
+fetchResponse();
 
