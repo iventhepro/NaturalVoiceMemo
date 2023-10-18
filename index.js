@@ -1,4 +1,3 @@
-
 async function cloneVoice(voice_name, audioFile) {
   const fetch = require('node-fetch');
 
@@ -24,6 +23,7 @@ async function cloneVoice(voice_name, audioFile) {
 //media Recorded used for both Buttons
 let mediaRecorder;
 let audioChunks = [];
+var audioBlob; 
 
 //start Audio Recording
 document.getElementById('startRecording').addEventListener('click', async () => {
@@ -38,7 +38,7 @@ document.getElementById('startRecording').addEventListener('click', async () => 
     };
 
     mediaRecorder.onstop = () => {
-      const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+      audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
       const audioUrl = URL.createObjectURL(audioBlob);
       document.getElementById('audioPlayer').src = audioUrl;
     };
@@ -57,12 +57,13 @@ document.getElementById('stopRecording').addEventListener('click', async () => {
 })
 
 document.getElementById('sendAudio').addEventListener('click', ()=>{
-cloneVoice(document.getElementById('voiceName'), audioBlob);
+//cloneVoice(document.getElementById('voiceName'), audioBlob);
+speechToText();
 }
 )
 
 
-const API_KEY = "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"; // Replace with your actual API key
+const API_KEY = "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"; // Replace with your actual API key
 
 async function fetchResponse() {
 
@@ -104,5 +105,38 @@ async function fetchResponse() {
 
 }
 
-fetchResponse();
+async function speechToText() {
+
+  const response = await fetch("https://api.openai.com/v1/audio/transcriptions", { //This is the API endpoint
+
+    method: "POST",
+
+    headers: {
+
+      Authorization: `Bearer ${API_KEY}`
+
+    },
+
+    body: JSON.stringify({
+
+      model: "whisper-1",
+
+      file: new File([audioBlob],document.getElementById('voiceName').value, {type: "audio/wav"}),
+
+      "max_tokens": 100,
+
+      "language": "de",
+
+      "temperature": 0.5,
+
+    }),
+
+  });
+
+  const data = await response.json();
+
+  console.log(data);
+
+}
+
 
