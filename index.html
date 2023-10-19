@@ -13,25 +13,32 @@
 </head>
 
 <body>
+    <H1 class="display-1">Natural Voice Memo</H1>
+    <br><br>
+
     <form id="audioRecordForm" action="post">
         <div class="form-group">
-            <label for="voiceName">Name of the recorded Voice</label>
+            <label for="voiceName">Name of the recorded Voice*</label>
             <br>
-            <input type="text" name="voiceName" id="voiceName" placeholder="iven_voice">
+            <input required class="form-control" type="text" name="voiceName" id="voiceName" placeholder="iven_voice">
         </div>
-        <br>
-        <div class="form-group">
-            <audio controls id="audioPlayer"></audio>
-        </div>
-        <select id="format">
+        
+        <br><br>
+        <select class="form-control" id="format">
             <option value="mulaw">mulaw</option>
             <option value="mp3" selected>mp3</option>
             <option value="wav">wav</option>
             <option value="ogg">ogg</option>
             <option value="flac">flac</option>
         </select>
+        <br><br>
         <button id="startStopRecording" type="button" class="btn btn-success">Start recording</button>
-        <button id="sendAudio" type="button">Send Audio</button>
+        <br><br>
+        <div class="form-group">
+            <audio controls id="audioPlayer"></audio>
+        </div>
+        <br><br>
+        <button class="btn btn-primary" id="sendAudio" type="button">Send Audio</button>
     </form>
 
 
