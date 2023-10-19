@@ -65,7 +65,7 @@ speechToText();
 
 const API_KEY = "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"; // Replace with your actual API key
 
-async function fetchResponse() {
+async function generateTextFromUserInput(text) {
 
   const response = await fetch("https://api.openai.com/v1/chat/completions", { //This is the API endpoint
 
@@ -83,9 +83,9 @@ async function fetchResponse() {
 
       "model": "gpt-3.5-turbo",
 
-      "messages": [{ "role": "user", "content": "Wer ist Präsident von Amerika?" }],
+      "messages": [{ "role": "user", "content": text }],
 
-      "max_tokens": 100,
+      "max_tokens": 500,
 
       "top_p": 1,
 
@@ -112,7 +112,7 @@ async function speechToText() {
   const formData = new FormData();
   formData.append('model', 'whisper-1');
   formData.append('file', file);
-  formData.append('max_tokens', 100);
+  formData.append('max_tokens', 500);
   formData.append('language', 'de');
   formData.append('temperature', 0.5);
 
@@ -132,6 +132,9 @@ async function speechToText() {
   const data = await response.json();
 
   console.log(data);
+
+  generateTextFromUserInput(data.text);
+
 
 }
 
