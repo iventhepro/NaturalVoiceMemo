@@ -23,10 +23,20 @@
         <div class="form-group">
             <audio controls id="audioPlayer"></audio>
         </div>
+        <select id="format">
+            <option value="mulaw">mulaw</option>
+            <option value="mp3" selected>mp3</option>
+            <option value="wav">wav</option>
+            <option value="ogg">ogg</option>
+            <option value="flac">flac</option>
+        </select>
         <button id="startRecording" type="button">Record Voice</button>
         <button id="stopRecording" type="button">Stop Recording</button>
         <button id="sendAudio" type="button">Send Audio</button>
     </form>
+
+
+
     <script defer src="index.js"></script>
 
 </body>
