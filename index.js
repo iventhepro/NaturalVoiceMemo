@@ -24,7 +24,8 @@ async function cloneVoice(voice_name, audioFile) {
 let mediaRecorder;
 let audioChunks = [];
 var audioBlob;
-
+let isRecording = false;
+const recordButton = document.getElementById('startStopRecording');
 //start Audio Recording
 recordButton.addEventListener('click', async () => {
   try {
@@ -62,13 +63,6 @@ recordButton.addEventListener('click', async () => {
   }
 
 });
-
-//stop audio Recording
-document.getElementById('stopRecording').addEventListener('click', async () => {
-  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-    mediaRecorder.stop();
-  }
-})
 
 document.getElementById('sendAudio').addEventListener('click', () => {
   speechToText();
