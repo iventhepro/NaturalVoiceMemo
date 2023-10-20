@@ -31,12 +31,17 @@ recordButton.addEventListener('click', async () => {
   try {
     //if media player is not recording, initialize recorder and start recording, else stop
     if (!isRecording) {
+      if(audioBlob!=null){
+        alert("Alte audio wird verworfen, neue Aufnahme startet...");
+      }
+      //initialisierung des MediaRecorders
       const micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorder = new MediaRecorder(micStream);
 
-      mediaRecorder.ondataavailable = event => {
-        if (event.data.size > 0) {
-          audioChunks.push(event.data);
+      //sobald daten verfügbar sind fügt datenstücke dem File hinzu
+      mediaRecorder.ondataavailable = e => {
+        if (e.data.size > 0) {
+          audioChunks.push(e.data);
         }
       };
 
@@ -45,6 +50,16 @@ recordButton.addEventListener('click', async () => {
         const audioUrl = URL.createObjectURL(audioBlob);
         document.getElementById('audioPlayer').src = audioUrl;
       };
+
+      // Setzt ein Timeout von 100 Sekunden (100'000 Millisekunden)
+      setTimeout(() => {
+        if (mediaRecorder.state !== 'inactive') {
+          mediaRecorder.stop();
+          alert('Maximale Aufnahmelänge erreicht (10 Sekunden).');
+          recordButton.setAttribute("class", "btn btn-success");
+          recordButton.textContent = "Start Recording";
+        }
+      }, 100000);
 
       mediaRecorder.start();
       recordButton.setAttribute("class", "btn btn-danger");
@@ -56,6 +71,7 @@ recordButton.addEventListener('click', async () => {
         mediaRecorder.stop();
         recordButton.setAttribute("class", "btn btn-success");
         recordButton.textContent = "Start Recording";
+        isRecording = false;
       }
     }
   } catch (error) {
@@ -148,27 +164,27 @@ async function speechToText() {
 async function cloningVoice(gbttext) {
   let file = new File([audioBlob], document.getElementById('voiceName').value + ".wav", { type: "audio/wav" });
 
- /* const form = new FormData();
-  form.append('voice_name', 'iven');
-  form.append('sample_file', file);
-
-  const options = {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: {
-      accept: 'application/json',
-      AUTHORIZATION: '0f7d2e19b59d4fc1ad960940f01e64c1',
-      'X-USER-ID': 'Qc4eSRR3QkUPDw0X59Y9YqVkqYE2'
-    }
-  };
-
-  options.body = JSON.stringify(form);
-
-  fetch('https://api.play.ht/api/v2/cloned-voices/instant', options)
-    .then(response => response.json())
-    .then(response => console.log(response))
-    .then(response => textToSpeech(response.id, gbttext))
-    .catch(err => console.error(err));*/
+  /* const form = new FormData();
+   form.append('voice_name', 'iven');
+   form.append('sample_file', file);
+ 
+   const options = {
+     method: 'POST',
+     mode: 'no-cors',
+     headers: {
+       accept: 'application/json',
+       AUTHORIZATION: '0f7d2e19b59d4fc1ad960940f01e64c1',
+       'X-USER-ID': 'Qc4eSRR3QkUPDw0X59Y9YqVkqYE2'
+     }
+   };
+ 
+   options.body = JSON.stringify(form);
+ 
+   fetch('https://api.play.ht/api/v2/cloned-voices/instant', options)
+     .then(response => response.json())
+     .then(response => console.log(response))
+     .then(response => textToSpeech(response.id, gbttext))
+     .catch(err => console.error(err));*/
 
 
 
@@ -180,7 +196,7 @@ async function cloningVoice(gbttext) {
 
 
 
-  fetch("http://localhost:3000/api/upload", {body: formdata,method: "POST"})
+  fetch("http://localhost:3000/api/upload", { body: formdata, method: "POST" })
     .then(response => response.text())
     .then(result => console.log(result))
     .then(response => textToSpeech(response.id, gbttext))
