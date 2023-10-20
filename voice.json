@@ -1,0 +1,6 @@
+{
+    id: 's3://voice-cloning-zero-shot/bd8a6816-6d6f-42d7-aada-f786164c0bc0/iven/manifest.json',
+    name: 'iven',
+    type: 'instant',
+    voice_engine: 'PlayHT2.0'
+  }
