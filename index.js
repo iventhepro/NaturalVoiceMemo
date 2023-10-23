@@ -85,7 +85,7 @@ document.getElementById('sendAudio').addEventListener('click', () => {
 });
 
 
-const API_KEY = "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"; // Replace with your actual API key
+const API_KEY = "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"; // Replace with your actual API key
 
 
 async function generateTextFromUserInput(text) {
@@ -198,4 +198,7 @@ function setSourcesToAudio(dataUrl) {
   let stringWithoutBraces = stringWithoutQuotes.replace("}", '');
 
   document.getElementById("audioSrc").src = stringWithoutBraces;
+
+  document.getElementById('result').src = "NaturalVoiceMemo/output.mp3";
+
 }
