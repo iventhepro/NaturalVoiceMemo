@@ -22,7 +22,7 @@
             <br>
             <input required class="form-control" type="text" name="voiceName" id="voiceName" placeholder="iven_voice">
         </div>
-        
+
         <br><br>
         <select class="form-control" id="format">
             <option value="mulaw">mulaw</option>
@@ -41,9 +41,26 @@
         <button class="btn btn-primary" id="sendAudio" type="button">Send Audio</button>
     </form>
 
-    <audio id="result" controls></audio> 
+    <audio id="result" controls></audio>
+    <br><br>
 
-    <script defer src="index.js"></script>
+    <h4 class="display-4">Text Sent</h3>
+        <div class="scroll-box overflow-auto border">
+            <p id="sentText">
+
+            </p>
+        </div>
+
+        <br><br>
+
+        <h4 class="display-4">Text Response</h3>
+            <div class="scroll-box overflow-auto border">
+                <p id="responseText">
+
+                </p>
+            </div>
+
+            <script defer src="index.js"></script>
 
 </body>
 

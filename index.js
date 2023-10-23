@@ -31,7 +31,7 @@ recordButton.addEventListener('click', async () => {
   try {
     //if media player is not recording, initialize recorder and start recording, else stop
     if (!isRecording) {
-      if(audioBlob!=null){
+      if (audioBlob != null) {
         alert("Alte audio wird verworfen, neue Aufnahme startet...");
       }
       //initialisierung des MediaRecorders
@@ -85,7 +85,7 @@ document.getElementById('sendAudio').addEventListener('click', () => {
 });
 
 
-const API_KEY = "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"; // Replace with your actual API key
+const API_KEY = "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"; // Replace with your actual API key
 
 async function generateTextFromUserInput(text) {
 
@@ -125,6 +125,9 @@ async function generateTextFromUserInput(text) {
 
   console.log(data);
 
+  //set Text of response to the actual text Response
+  document.getElementById("responseText").innerText = data.choices[0].message.content;
+  alert("Text succesfully generated from prompt!");
   await cloningVoice(data.choices[0].message.content);
 
 }
@@ -154,7 +157,9 @@ async function speechToText() {
   });
 
   const data = await response.json();
-
+    //set the sent voice text to the box
+  document.getElementById("sentText").innerText = data.text;
+  alert("Audio converted to Text!");
   console.log(data);
 
   generateTextFromUserInput(data.text);
