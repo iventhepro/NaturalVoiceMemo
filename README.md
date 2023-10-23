@@ -8,6 +8,10 @@ mithilfe des Buttons "Start recording" wird die Aufnahme begonnen. Mit dem selbe
 HTML, JavaScript, Node.js
 
 ## installation
+node installieren 
+cd backend
+npm i
+(
 npm i node-fetch
 npm i cors
 npm i express
@@ -15,3 +19,5 @@ npm i form-data
 npm i multer
 npm i  stream
 npm i axios
+)
+node app

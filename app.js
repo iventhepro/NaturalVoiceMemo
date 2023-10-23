@@ -23,7 +23,7 @@ app.use(cors())
 const upload = multer({ storage: storage });
 
 app.post('/api/mytts', upload.single('audioFile'), (req, res) => {
-
+    let filename = req.body.filename; 
     let text = req.body.text; 
     let format = req.body.format; 
     console.log(format); 
@@ -55,7 +55,7 @@ app.post('/api/mytts', upload.single('audioFile'), (req, res) => {
            
             // Audio als .mp3-Datei speichern (optional)
         
-            fs.writeFileSync('output.mp3', decodedAudioBuffer, 'binary');
+            fs.writeFileSync(filename + '.' + format, decodedAudioBuffer, 'binary');
             // Audio in eine Data-URL umwandeln
             //const dataUrl = `data:audio/mpeg;base64,${decodedAudioBuffer.toString('base64')}`;
             res.json(response.data.amazon.audio_resource_url); // Sende die Daten an den Cl

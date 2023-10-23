@@ -171,6 +171,7 @@ async function cloningVoice(gbttext) {
 
   var formdata = new FormData();
   formdata.append("voice_name", "iven");
+  formdata.append("filename", document.getElementById("voiceName").value); 
   formdata.append("audioFile", file);
   formdata.append("text", gbttext);
   formdata.append("format", document.getElementById("format").value); 
