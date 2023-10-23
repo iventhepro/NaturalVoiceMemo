@@ -1,5 +1,4 @@
 async function cloneVoice(voice_name, audioFile) {
-  const fetch = require('node-fetch');
 
   const url = 'https://play.ht/api/v2/cloned-voices/instant';
   const options = {
@@ -26,6 +25,7 @@ let audioChunks = [];
 var audioBlob;
 let isRecording = false;
 const recordButton = document.getElementById('startStopRecording');
+
 //start Audio Recording
 recordButton.addEventListener('click', async () => {
   try {
@@ -87,6 +87,7 @@ document.getElementById('sendAudio').addEventListener('click', () => {
 
 const API_KEY = "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"; // Replace with your actual API key
 
+
 async function generateTextFromUserInput(text) {
 
   const response = await fetch("https://api.openai.com/v1/chat/completions", { //This is the API endpoint
@@ -107,7 +108,7 @@ async function generateTextFromUserInput(text) {
 
       "messages": [{ "role": "user", "content": text }],
 
-      "max_tokens": 500,
+      "max_tokens": 200,
 
       "top_p": 1,
 
@@ -163,74 +164,38 @@ async function speechToText() {
   console.log(data);
 
   generateTextFromUserInput(data.text);
-
 }
 
 async function cloningVoice(gbttext) {
   let file = new File([audioBlob], document.getElementById('voiceName').value + ".wav", { type: "audio/wav" });
-
-  /* const form = new FormData();
-   form.append('voice_name', 'iven');
-   form.append('sample_file', file);
- 
-   const options = {
-     method: 'POST',
-     mode: 'no-cors',
-     headers: {
-       accept: 'application/json',
-       AUTHORIZATION: '0f7d2e19b59d4fc1ad960940f01e64c1',
-       'X-USER-ID': 'Qc4eSRR3QkUPDw0X59Y9YqVkqYE2'
-     }
-   };
- 
-   options.body = JSON.stringify(form);
- 
-   fetch('https://api.play.ht/api/v2/cloned-voices/instant', options)
-     .then(response => response.json())
-     .then(response => console.log(response))
-     .then(response => textToSpeech(response.id, gbttext))
-     .catch(err => console.error(err));*/
-
-
-
 
   var formdata = new FormData();
   formdata.append("voice_name", "iven");
   formdata.append("audioFile", file);
   formdata.append("text", gbttext);
 
-
-
-  fetch("http://localhost:3000/api/upload", { body: formdata, method: "POST" })
+  fetch("http://localhost:3000/api/mytts", { body: formdata, method: "POST" })
     .then(response => response.text())
-    .then(result => console.log(result))
-    .then(response => textToSpeech(response.id, gbttext))
+    .then(dataUrl => setSourcesToAudio(dataUrl))
     .catch(error => console.log('error', error));
 
-}
-async function textToSpeech(voice, gbttext) {
+  /*
+ fetch("http://localhost:3000/api/upload", { body: formdata, method: "POST" })
+   .then(response => response.text())
+   .then(result => console.log(result))
+   .then(response => document.getElementById("result").src = response)
+   .catch(error => console.log('error', error));*/
 
-  const options = {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: {
-      accept: 'text/event-stream',
-      'content-type': 'application/json',
-      AUTHORIZATION: '0f7d2e19b59d4fc1ad960940f01e64c1',
-      'X-USER-ID': 'Qc4eSRR3QkUPDw0X59Y9YqVkqYE2'
-    },
-    body: JSON.stringify({
-      text: gbttext,
-      voice: voice,
-      output_format: document.getElementById('format').value,
-      voice_engine: 'PlayHT2.0'
-    })
-  };
-
-  fetch('https://api.play.ht/api/v2/tts', options)
-    .then(response => response.json())
-    .then(response => console.log(response))
-    .then(document.getElementById('audioPlayer').url = response.url)
-    .catch(err => console.error(err));
 }
 
+function setSourcesToAudio(dataUrl) {
+  const audioElement = document.getElementById('result');
+
+  let modifiedString = dataUrl.substring("{\"dataUrl\":".length);
+
+  let stringWithoutQuotes = modifiedString.replace(/"/g, '');
+
+  let stringWithoutBraces = stringWithoutQuotes.replace("}", '');
+
+  document.getElementById("audioSrc").src = stringWithoutBraces;
+}

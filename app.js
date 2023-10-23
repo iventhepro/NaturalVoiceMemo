@@ -1,12 +1,12 @@
+const fs = require('fs');
 const express = require('express');
 const app = express();
 var FormData = require('form-data');
 
 const port = 3000;
 const multer = require('multer');
-const cors = require('cors')
-const fetch = require('node-fetch')
-const Readable = require('stream').Readable; // Importieren Sie die Readable-Klasse aus dem 'stream'-Modul
+const cors = require('cors');
+const fetch = require('node-fetch');
 
 app.use(express.json());
 const storage = multer.diskStorage({
@@ -17,21 +17,70 @@ const storage = multer.diskStorage({
         cb(null, file.originalname); // Der Dateiname wird nicht geändert
     }
 });
+
 app.use(cors())
+
 const upload = multer({ storage: storage });
+
+app.post('/api/mytts', upload.single('audioFile'), (req, res) => {
+
+    let text = req.body.text; 
+
+    const axios = require("axios").default;
+
+    const options = {
+        method: "POST",
+        url: "https://api.edenai.run/v2/audio/text_to_speech",
+        headers: {
+            authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMDhiYTQzZGUtZTI0Ny00ZTAzLTk4MTYtMWMzNmEyZjkyNjBlIiwidHlwZSI6ImFwaV90b2tlbiJ9.ZUbxhcXIv9ftY6rkHxHCZPjt1dYrZHBgDRoemXY00BA",
+        },
+        data: {
+            show_original_response: false,
+            fallback_providers: "google",
+            providers: "amazon",
+            language: "de",
+            text: text,
+            option: "FEMALE",
+        },
+    };
+
+    axios
+        .request(options)
+        .then((response) => {
+         
+            // Base64-String dekodieren
+            const decodedAudioBuffer = Buffer.from(response.data.amazon.audio, 'base64');
+           
+            // Audio als .mp3-Datei speichern (optional)
+        
+            fs.writeFileSync('output.mp3', decodedAudioBuffer, 'binary');
+
+            // Audio in eine Data-URL umwandeln
+            //const dataUrl = `data:audio/mpeg;base64,${decodedAudioBuffer.toString('base64')}`;
+            console.log(dataUrl);
+            res.json(
+             decodedAudioBuffer
+            ); // Sende die Daten an den Client
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+
+});
+
 app.post('/api/upload', upload.single('audioFile'), (req, res) => {
     console.log(req.file)
-    let {text} = req.body
+    let text = req.body.text
     const formData = new FormData();
-  
+
     formData.append('sample_file', fs.createReadStream('./uploads/' + req.file.filename));
     formData.append('voice_name', 'iven');
 
     fetch('https://api.play.ht/api/v2/cloned-voices/instant', {
         method: 'POST',
         headers: {
-            'AUTHORIZATION': 'f32b6b3096b44e09a75a5f5ac20e14a6',
-            'X-USER-ID': 'CPP4MvdEgEfoseGmIByCBymdMs43',
+            'AUTHORIZATION': 'fa8a194852cb466db77588e13f13ac7e',
+            'X-USER-ID': 'TMH9RgDJa8O4YbWhKuImVWSy23F3',
         },
         body: formData,
     })
@@ -39,92 +88,67 @@ app.post('/api/upload', upload.single('audioFile'), (req, res) => {
         .then(data => {
             console.log(data);
             // Senden Sie die API-Antwort zurück an den Client
-            tts('s3://voice-cloning-zero-shot/bd8a6816-6d6f-42d7-aada-f786164c0bc0/iven/manifest.json', text)
+            tts("s3://voice-cloning-zero-shot/ed709991-9de7-4fe7-b19d-e4aaa975d003/iven/manifest.json", text, res)
         })
         .catch(error => {
             console.error(error);
-            tts('s3://voice-cloning-zero-shot/bd8a6816-6d6f-42d7-aada-f786164c0bc0/iven/manifest.json', text)
+            tts('s3://voice-cloning-zero-shot/bd8a6816-6d6f-42d7-aada-f786164c0bc0/iven/manifest.json', text, res)
 
         });
+
 });
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
-async function tts(voice, text,){
-    console.log(text)
+
+async function tts(voice, text, res) {
+    console.log(text);
+    console.log(voice);
     const options = {
         method: 'POST',
         headers: {
-          accept: 'text/event-stream',
-          'content-type': 'application/json',
-          AUTHORIZATION: 'f32b6b3096b44e09a75a5f5ac20e14a6',
-          'X-USER-ID': 'CPP4MvdEgEfoseGmIByCBymdMs43'
+            accept: 'text/event-stream',
+            'content-type': 'application/json',
+            AUTHORIZATION: 'fa8a194852cb466db77588e13f13ac7e',
+            'X-USER-ID': 'TMH9RgDJa8O4YbWhKuImVWSy23F3'
         },
         body: JSON.stringify({
-          text: text,
-          voice: voice,
-          output_format:"mp3",
-          voice_engine: 'PlayHT2.0'
+            text: text,
+            voice: 's3://voice-cloning-zero-shot/d9ff78ba-d016-47f6-b0ef-dd630f59414e/female-cs/manifest.json',
+            output_format: 'mp3',
+            voice_engine: 'PlayHT2.0'
         })
-      };
-    
-      fetch('https://api.play.ht/api/v2/tts', options)
-      .then(response =>{        const fileStream = fs.createWriteStream('audio_output.mp3');
+    };
 
-    // Lesen Sie den Readable Stream der API-Antwort und schreiben Sie die Daten in die Datei
-    response.body.pipe(fileStream);
-console.log("startet")
-    // Optional: Hören Sie auf 'end'-Event, um zu wissen, wann das Schreiben abgeschlossen ist
-    fileStream.on('finish', () => {
-      console.log('Audio-Datei wurde erfolgreich geschrieben.');
-    });})
-      
-        //.then(response => response.json())
-        .catch(err => console.error(err));
-}
-var request = require('request');
-
-var fs = require('fs');
-var path = require('path');
-var options = {
-
-    'method': 'POST',
-
-    'url': 'https://api.play.ht/api/v2/cloned-voices/instant',
-
-    'headers': {
-
-        'accept': ' application/json',
-
-        'content-type': ' multipart/form-data',
-
-        'AUTHORIZATION': '11c84fe37adb40d1a22a28a614210f19',
-
-        'X-USER-ID': '0qLOleS0vHSkv1FCiDnge54TaYI2'
-
-    },
-
-    formData: {
-
-        'voice_name': 'iven',
-
-        'sample_file': {
-
-            'value': fs.createReadStream(path.join('C:/Users/ivenk/Desktop/NaturalVoiceMemo/file_example_WAV_1MG.wav')),
-
-            'options': {
-
-                'filename': path.join('C:/Users/ivenk/Desktop/NaturalVoiceMemo/file_example_WAV_1MG.wav'),
-
-                'contentType': null
-
-            }
-
-        }
-
+    try {
+        const response = await fetch('https://api.play.ht/api/v2/tts', options); // Lese den JSON-Inhalt des Response-Streams
+        console.log(response);
+        res.json(response); // Sende die Daten an den Client
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 
-};
 
-
+    /* const url = 'https://api.play.ht/api/v2/tts';
+     const options = {
+         method: 'POST',
+         headers: {
+             accept: 'application/json',
+             'content-type': 'application/json',
+             AUTHORIZATION: '8838eb0cd7f947a0b82fe18cdb6b422f',
+             'X-USER-ID': 'bgTbTv04P4PIr9EC9jPOjL948VH3'
+         },
+         body: JSON.stringify({
+             text: 'Hello from a realistic voice.',
+             voice: 's3://voice-cloning-zero-shot/d9ff78ba-d016-47f6-b0ef-dd630f59414e/female-cs/manifest.json',
+             output_format: 'mp3',
+             voice_engine: 'PlayHT2.0'
+         })
+     };
+ 
+     fetch(url, options)
+         .then(json => console.log(json))
+         .catch(err => console.error('error:' + err));*/
+}
