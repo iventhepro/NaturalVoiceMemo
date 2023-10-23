@@ -6,7 +6,7 @@ var FormData = require('form-data');
 const port = 3000;
 const multer = require('multer');
 const cors = require('cors');
-const fetch = require('node-fetch');
+//const fetch = require('node-fetch');
 
 app.use(express.json());
 const storage = multer.diskStorage({
@@ -56,7 +56,6 @@ app.post('/api/mytts', upload.single('audioFile'), (req, res) => {
             // Audio als .mp3-Datei speichern (optional)
         
             fs.writeFileSync('output.mp3', decodedAudioBuffer, 'binary');
-
             // Audio in eine Data-URL umwandeln
             //const dataUrl = `data:audio/mpeg;base64,${decodedAudioBuffer.toString('base64')}`;
             res.json(response.data.amazon.audio_resource_url); // Sende die Daten an den Cl
@@ -68,6 +67,10 @@ app.post('/api/mytts', upload.single('audioFile'), (req, res) => {
 
 });
 
+app.listen(port, () => {
+    console.log(`Server is running at http://localhost:${port}`);
+});
+/*
 app.post('/api/upload', upload.single('audioFile'), (req, res) => {
     console.log(req.file)
     let text = req.body.text
@@ -96,10 +99,6 @@ app.post('/api/upload', upload.single('audioFile'), (req, res) => {
 
         });
 
-});
-
-app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
 });
 
 async function tts(voice, text, res) {
@@ -150,5 +149,5 @@ async function tts(voice, text, res) {
  
      fetch(url, options)
          .then(json => console.log(json))
-         .catch(err => console.error('error:' + err));*/
-}
+         .catch(err => console.error('error:' + err));
+}*/
