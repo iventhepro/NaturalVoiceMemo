@@ -85,7 +85,7 @@ document.getElementById('sendAudio').addEventListener('click', () => {
 });
 
 
-const API_KEY = "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"; // Replace with your actual API key
+const API_KEY = ""; // Replace with your actual API key
 
 
 async function generateTextFromUserInput(text) {
