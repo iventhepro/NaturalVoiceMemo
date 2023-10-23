@@ -41,7 +41,10 @@
         <button class="btn btn-primary" id="sendAudio" type="button">Send Audio</button>
     </form>
 
-    <audio id="result" controls></audio>
+    <audio id="result" autobuffer="autobuffer" controls>
+        <source id="audioSrc" type="audio/mpeg"/>
+    </audio> 
+    
     <br><br>
 
     <h4 class="display-4">Text Sent</h3>
