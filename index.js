@@ -85,7 +85,7 @@ document.getElementById('sendAudio').addEventListener('click', () => {
 });
 
 
-const API_KEY = "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"; // Replace with your actual API key
+const API_KEY = "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"; // Replace with your actual API key
 
 
 async function generateTextFromUserInput(text) {
@@ -158,7 +158,7 @@ async function speechToText() {
   });
 
   const data = await response.json();
-    //set the sent voice text to the box
+  //set the sent voice text to the box
   document.getElementById("sentText").innerText = data.text;
   alert("Audio converted to Text!");
   console.log(data);
@@ -173,6 +173,7 @@ async function cloningVoice(gbttext) {
   formdata.append("voice_name", "iven");
   formdata.append("audioFile", file);
   formdata.append("text", gbttext);
+  formdata.append("format", document.getElementById("format").value); 
 
   fetch("http://localhost:3000/api/mytts", { body: formdata, method: "POST" })
     .then(response => response.text())
@@ -191,11 +192,13 @@ async function cloningVoice(gbttext) {
 function setSourcesToAudio(dataUrl) {
   const audioElement = document.getElementById('result');
 
-  let modifiedString = dataUrl.substring("{\"dataUrl\":".length);
-
-  let stringWithoutQuotes = modifiedString.replace(/"/g, '');
+  let stringWithoutQuotes = dataUrl.replace(/"/g, '');
 
   let stringWithoutBraces = stringWithoutQuotes.replace("}", '');
 
-  document.getElementById("audioSrc").src = stringWithoutBraces;
+  document.getElementById("result").src = stringWithoutBraces;
+
+  document.getElementById("download").href = stringWithoutBraces; 
+
+  document.getElementById("download").text = stringWithoutBraces; 
 }

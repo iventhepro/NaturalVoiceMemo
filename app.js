@@ -25,7 +25,8 @@ const upload = multer({ storage: storage });
 app.post('/api/mytts', upload.single('audioFile'), (req, res) => {
 
     let text = req.body.text; 
-
+    let format = req.body.format; 
+    console.log(format); 
     const axios = require("axios").default;
 
     const options = {
@@ -37,6 +38,7 @@ app.post('/api/mytts', upload.single('audioFile'), (req, res) => {
         data: {
             show_original_response: false,
             fallback_providers: "google",
+            audio_format: format, 
             providers: "amazon",
             language: "de",
             text: text,
@@ -47,7 +49,7 @@ app.post('/api/mytts', upload.single('audioFile'), (req, res) => {
     axios
         .request(options)
         .then((response) => {
-         
+            console.log(response); 
             // Base64-String dekodieren
             const decodedAudioBuffer = Buffer.from(response.data.amazon.audio, 'base64');
            
@@ -57,10 +59,8 @@ app.post('/api/mytts', upload.single('audioFile'), (req, res) => {
 
             // Audio in eine Data-URL umwandeln
             //const dataUrl = `data:audio/mpeg;base64,${decodedAudioBuffer.toString('base64')}`;
-            console.log(dataUrl);
-            res.json(
-             decodedAudioBuffer
-            ); // Sende die Daten an den Client
+            res.json(response.data.amazon.audio_resource_url); // Sende die Daten an den Cl
+            
         })
         .catch((error) => {
             console.error(error);
