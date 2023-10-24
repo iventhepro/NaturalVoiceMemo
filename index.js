@@ -1,23 +1,3 @@
-async function cloneVoice(voice_name, audioFile) {
-
-  const url = 'https://play.ht/api/v2/cloned-voices/instant';
-  const options = {
-    method: 'POST',
-    headers: {
-      accept: 'application/json',
-      'content-type': 'multipart/form-data',
-      AUTHORIZATION: 'fc509bae736646ee8703d2b48bdaecde',
-      'X-USER-ID': 'pZl8pzgzMvd2pxBKT6J6MPbyK4r1',
-      'sample_file': audioFile,
-      'voice_name': voice_name
-    }
-  };
-
-  fetch(url, options)
-    .then(res => res.json())
-    .then(json => console.log(json))
-    .catch(err => console.error('error:' + err));
-}
 
 //media Recorded used for both Buttons
 let mediaRecorder;
@@ -128,7 +108,7 @@ async function generateTextFromUserInput(text) {
 
   //set Text of response to the actual text Response
   document.getElementById("responseText").innerText = data.choices[0].message.content;
-  alert("Text succesfully generated from prompt!");
+  alert("Text succesfully generated from prompt! Waiting for Audio generation...");
   await cloningVoice(data.choices[0].message.content);
 
 }
@@ -160,7 +140,7 @@ async function speechToText() {
   const data = await response.json();
   //set the sent voice text to the box
   document.getElementById("sentText").innerText = data.text;
-  alert("Audio converted to Text!");
+  alert("Audio converted to Text! Waiting for Text Generation...");
   console.log(data);
 
   generateTextFromUserInput(data.text);
